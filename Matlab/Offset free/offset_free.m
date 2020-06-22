@@ -63,11 +63,12 @@ expmpc.feedback.fplot();
 t = 0:0.1:40;
 
 % Disturbance estimate
-d_hist  = zeros(1,length(t));
+d_hist  = zeros(2,length(t));
 
 % Augmented plant 
-A_aug = [A,[0;0];0,0,1];
-B_aug = [B;0];
+A_aug = [A,eye(2);zeros(2),eye(2)];
+B_aug = [B;0;0];
+C_aug = [eye(2),zeros(2)];
 
 % Slow LQR backup feedback gain matrix
 K = dlqr(A,B,[100,0;0,1],100000);
@@ -80,11 +81,11 @@ u_hist = zeros(1,length(t)-1);
 
 x_real = zeros(2,length(t));
 
-L = -place(A_aug',[0,1,1]',[0.8,0.85,0.9])';
+L = -place(A_aug',C_aug',[0.5,0.55,0.6,0.65])';
 
 for i=1:length(t)-1
     % Find target according to the disturbance
-    val_ss = [eye(2)-A,-B;C,0]\[0;0;ref-d_hist(i)];
+    val_ss = [eye(2)-A,-B;C,0]\[d_hist(:,i);ref];
     xs = val_ss(1:2);
     us = val_ss(3);
     
@@ -108,10 +109,10 @@ for i=1:length(t)-1
     end
     
     % State update
-    x_aug = A_aug*[x_hist(:,i);d_hist(i)] + B_aug*u_hist(i)+...
-            L*(x_hist(2,i)+d_hist(i)-x_real(2,i));
+    x_aug = A_aug*[x_hist(:,i);d_hist(:,i)] + B_aug*u_hist(i)+...
+            L*(x_hist(:,i)-x_real(:,i));
     x_hist(:,i+1) = x_aug(1:2);
-    d_hist(:,i+1) = x_aug(3);
+    d_hist(:,i+1) = x_aug(3:4);
     
     % Load switch
     if t(i)<20
@@ -140,7 +141,7 @@ plot(t, 5*ones(1,length(t)),'r--');
 ylabel('x_2(V)');
 
 subplot(4,1,3);
-plot(t, d_hist);
+plot(t, d_hist(2,:));
 grid on; 
 ylabel('Disturbance');
 
