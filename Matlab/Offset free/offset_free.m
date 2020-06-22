@@ -124,7 +124,7 @@ end
 
 % Time plots
 figure;
-subplot(4,1,1); 
+subplot(5,1,1); 
 plot(t, x_hist(1,:));
 grid on;
 hold on;
@@ -132,7 +132,7 @@ plot(t, x_real(1,:));
 legend('Estimate','Real');
 ylabel('x_1(mA)');
 
-subplot(4,1,2);
+subplot(5,1,2);
 plot(t, x_hist(2,:));
 grid on; 
 hold on;
@@ -140,12 +140,17 @@ plot(t, x_real(2,:));
 plot(t, 5*ones(1,length(t)),'r--');
 ylabel('x_2(V)');
 
-subplot(4,1,3);
+subplot(5,1,3);
+plot(t, 1000*d_hist(1,:));
+grid on; 
+ylabel('Disturbance(mA)');
+
+subplot(5,1,4);
 plot(t, d_hist(2,:));
 grid on; 
-ylabel('Disturbance');
+ylabel('Disturbance(V)');
 
-subplot(4,1,4);
+subplot(5,1,5);
 grid on; hold on;
 plot(t, [0 u_hist]);
 ylabel('Duty cycle(%)');
