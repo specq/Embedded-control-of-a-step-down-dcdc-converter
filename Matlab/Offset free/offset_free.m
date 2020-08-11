@@ -116,9 +116,9 @@ for i=1:length(t)-1
     
     % Load switch
     if t(i)<20
-        x_real(:,i+1) = G1.A*x_real(:,i) + G1.B*u_hist(:,i);
+        x_real(:,i+1) = G4.A*x_real(:,i) + G4.B*u_hist(:,i);
     else
-        x_real(:,i+1) = G2.A*x_real(:,i) + G2.B*u_hist(:,i);
+        x_real(:,i+1) = G3.A*x_real(:,i) + G3.B*u_hist(:,i);
     end
 end
 
